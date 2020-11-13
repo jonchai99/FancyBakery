@@ -1,0 +1,28 @@
+<div class="columns" [formGroup]="form">
+  <div class="column is-5">
+    <mat-form-field>
+      <mat-select formControlName="productCode">
+        <mat-option [value]="null">Please select</mat-option>
+        <mat-option *ngFor="let product of (products$ | async)" [value]="product.code">
+          {{ product.name }} ({{ product.code }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="productCode.hasError('required')">Product is required</mat-error>
+      <mat-label>Item</mat-label>
+    </mat-form-field>
+  </div>
+  <div class="column is-4">
+    <mat-form-field>
+      <input matInput formControlName="quantity" type="number" min="1" />
+      <mat-label>Quantity</mat-label>
+      <mat-error *ngIf="quantity.hasError('required')">Quantity is required</mat-error>
+      <mat-error *ngIf="quantity.hasError('min')">Min value is {{ productMinQuantity }}</mat-error>
+      <mat-error *ngIf="quantity.hasError('noQuantityDivisible')">Quantity is not divisible into packs</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="column is-3">
+    <button mat-stroked-button color="primary" (click)="add()" [disabled]="form.pristine || form.invalid">
+      Add Item
+    </button>
+  </div>
+</div>

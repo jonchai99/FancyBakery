@@ -1,0 +1,28 @@
+[
+  {
+    "code": "VS5",
+    "name": "Vegemite Scroll",
+    "packs": [
+      { "unitQuantity": 3, "unitPrice": 6.99 },
+      { "unitQuantity": 5, "unitPrice": 8.99 }
+    ]
+  },
+  {
+    "code": "MB11",
+    "name": "Blueberry Muffin",
+    "packs": [
+      { "unitQuantity": 2, "unitPrice": 9.95 },
+      { "unitQuantity": 5, "unitPrice": 16.95 },
+      { "unitQuantity": 8, "unitPrice": 24.95 }
+    ]
+  },
+  {
+    "code": "CF",
+    "name": "Croissant",
+    "packs": [
+      { "unitQuantity": 3, "unitPrice": 5.95 },
+      { "unitQuantity": 5, "unitPrice": 9.95 },
+      { "unitQuantity": 9, "unitPrice": 16.99 }
+    ]
+  }
+]

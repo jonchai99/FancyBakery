@@ -1,0 +1,26 @@
+<ng-container *ngIf="dataSource$ | async as dataSource">
+  <table class="table is-striped is-fullwidth mt-4" *ngIf="dataSource.length > 0">
+    <thead>
+      <tr>
+        <th>Quantity</th>
+        <th>Product Code</th>
+        <th>Breakdown</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let orderItem of dataSource">
+        <td>{{ orderItem.quantity }}</td>
+        <td>{{ orderItem.productCode }}</td>
+        <td>
+          <ul>
+            <li *ngFor="let orderDivision of orderItem.divisions">
+              {{ orderDivision.description }}
+            </li>
+          </ul>
+        </td>
+        <td>{{ orderItem.lineTotal | currency }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>
