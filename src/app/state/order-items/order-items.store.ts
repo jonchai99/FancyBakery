@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EntityState, EntityStore, StoreConfig } from '@datorama/akita';
 import { findMinQuantity, Product, ProductsQuery } from '../products';
+import { OrderItemDivision } from './order-item-division.model';
 import { OrderItem } from './order-item.model';
 
 export interface OrderItemsState extends EntityState<OrderItem> {}
@@ -27,7 +28,8 @@ export class OrderItemsStore extends EntityStore<OrderItemsState> {
       throw Error('Quantity does not satisfy minimum requirement');
     }
 
-    orderItem = this.determineDivision(product, orderItem);
+    const divisions = this.determineDivision(product, orderItem.quantity);
+    orderItem.divisions = divisions;
     orderItem.lineTotal = orderItem.divisions.map((x) => x.total).reduce((previous, current) => previous + current, 0);
 
     return orderItem;
@@ -36,16 +38,18 @@ export class OrderItemsStore extends EntityStore<OrderItemsState> {
   akitaPreUpdateEntity(oldEntity: OrderItem, newEntity: OrderItem): OrderItem {
     const product = this.productsQuery.getEntity(newEntity.productCode);
 
-    newEntity = this.determineDivision(product, newEntity);
+    const divisions = this.determineDivision(product, newEntity.quantity);
+    newEntity.divisions = divisions;
     newEntity.lineTotal = newEntity.divisions.map((x) => x.total).reduce((previous, current) => previous + current, 0);
 
     return newEntity;
   }
 
-  determineDivision(product: Product, orderItem: OrderItem): OrderItem {
+  determineDivision(product: Product, quantity: number): OrderItemDivision[] {
     const sortedPacks = [...product.packs].sort((a, b) => b.unitQuantity - a.unitQuantity);
+    const result: OrderItemDivision[] = [];
 
-    let initialRemainder = orderItem.quantity;
+    let initialRemainder = quantity;
 
     for (const pack of sortedPacks) {
       let remainder = initialRemainder;
@@ -66,7 +70,7 @@ export class OrderItemsStore extends EntityStore<OrderItemsState> {
 
       const noOfPacks = Math.trunc(initialRemainder / pack.unitQuantity);
 
-      orderItem.divisions.push({
+      result.push({
         description: `${noOfPacks} x ${pack.unitQuantity} $${pack.unitPrice}`,
         total: Math.round(noOfPacks * pack.unitPrice * 100) / 100,
       });
@@ -82,6 +86,6 @@ export class OrderItemsStore extends EntityStore<OrderItemsState> {
       throw Error(`Quantity defies all logic. There's remainder of ${initialRemainder}`);
     }
 
-    return orderItem;
+    return result;
   }
 }
